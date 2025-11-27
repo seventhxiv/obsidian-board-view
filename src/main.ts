@@ -17,7 +17,7 @@ export default class BoardViewPlugin extends Plugin {
 		await this.loadSettings();
 
 		// Initialize services
-		await Services.initialize(this);
+		Services.initialize(this);
 
 		// Initialize plugin UI (ribbon icons, commands)
 		PluginInterface.initialize();
@@ -69,7 +69,7 @@ export default class BoardViewPlugin extends Plugin {
 							type: 'toggle',
 							displayName: 'Color Headers',
 							key: BoardOptionKeys.COLOR_HEADERS,
-							default: false,
+							default: true,
 							description: 'Apply color to headers (chips)',
 						},
 						{
@@ -83,7 +83,7 @@ export default class BoardViewPlugin extends Plugin {
 							type: 'toggle',
 							displayName: 'Color Cards',
 							key: BoardOptionKeys.COLOR_CARDS,
-							default: false,
+							default: true,
 							description: 'Apply color to cards (minimal border)',
 						},
 					]
@@ -187,7 +187,7 @@ export default class BoardViewPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()) as BoardViewSettings;
 	}
 
 	async saveSettings() {

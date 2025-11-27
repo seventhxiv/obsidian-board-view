@@ -366,6 +366,7 @@ body {
     /* font-size: var(--table-text-size); */
     font-weight: calc(var(--font-weight) + var(--bold-modifier));
 }
+
 /* Gallery View for Sub-groups */
 .board-rows-container {
     display: flex;
@@ -375,12 +376,14 @@ body {
 }
 
 .board-rows-container.is-gallery {
-    flex-direction: column; /* Keep rows stacked vertically */
+    flex-direction: column;
+    /* Keep rows stacked vertically */
     gap: 12px;
 }
 
 .board-rows-container.is-gallery .board-row-wrapper {
-    width: 100%; /* Full width for each row */
+    width: 100%;
+    /* Full width for each row */
     margin-bottom: 0;
 }
 
@@ -391,28 +394,35 @@ body {
 
 .board-rows-container.is-gallery .board-row {
     flex: 1;
-    overflow: visible; /* Allow wrapping */
+    overflow: visible;
+    /* Allow wrapping */
 }
 
 .board-rows-container.is-gallery .board-row-cells {
-    flex-direction: row; /* This is the key - make cells flow horizontally */
+    flex-direction: row;
+    /* This is the key - make cells flow horizontally */
 }
 
 .board-rows-container.is-gallery .board-cell {
-    width: 100%; /* Take full width since there's only one cell */
+    width: 100%;
+    /* Take full width since there's only one cell */
     padding: 0;
     background: transparent;
     display: flex;
-    flex-direction: row; /* Make cards flow horizontally */
-    flex-wrap: wrap; /* Allow cards to wrap to next line */
-    gap: 8px; /* Space between cards */
+    flex-direction: row;
+    /* Make cards flow horizontally */
+    flex-wrap: wrap;
+    /* Allow cards to wrap to next line */
+    gap: 8px;
+    /* Space between cards */
 }
 
 /* In gallery mode, cards should have a fixed width */
 .board-rows-container.is-gallery .board-card {
     width: var(--board-view-column-width);
     flex: 0 0 var(--board-view-column-width);
-    margin-bottom: 0; /* Remove margin since we use gap */
+    margin-bottom: 0;
+    /* Remove margin since we use gap */
 }
 
 /* New Note button in gallery mode */
@@ -422,3 +432,25 @@ body {
     margin-top: 0;
 }
 
+
+/* PropertyView Styles */
+.board-card-file-name-container {
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+}
+
+.board-card-icon {
+    margin-right: 5px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.board-card-file-name {
+    text-decoration: none;
+}
+
+.board-card-file-name-no-icon {
+    text-decoration: none;
+    padding-left: 6px;
+}

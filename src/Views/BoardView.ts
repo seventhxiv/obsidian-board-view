@@ -39,13 +39,13 @@ export interface BoardViewData {
 }
 
 export interface BoardViewCallbacks {
-    onCardDrop: (itemId: string, groupPropertyId: string, groupPropertyValue: unknown, subGroupPropertyId?: string | null, subGroupPropertyValue?: unknown) => void;
+    onCardDrop: (itemId: string, groupPropertyId: string, groupPropertyValue?: string | null, subGroupPropertyId?: string | null, subGroupPropertyValue?: string | null) => void;
     onHideGroup: (groupValue: string) => void;
     onHideSubGroup: (subGroupValue: string) => void;
     onMoveGroup: (groupValue: string, direction: 'left' | 'right') => void;
     onMoveSubGroup: (subGroupValue: string, direction: 'up' | 'down') => void;
     onSetColumnColor: (groupValue: string, color: string, isSubGroup?: boolean) => void;
-    onNewNoteClick: (groupValue: unknown, subGroupValue?: unknown) => Promise<void>;
+    onNewNoteClick: (groupValue: unknown, subGroupValue?: unknown) => void;
 }
 
 const COLUMN_COLORS = ColorManager.getColorNames().map(name =>
@@ -99,7 +99,7 @@ export class BoardView {
             if (data.cardOptions.colorHeaders && data.groupPropertyId) {
                 const circle = header.createSpan('board-header-color-circle');
                 const colorName = this.getColorName(column.id) || 'grey';
-                ColorManager.apply(circle, colorName.toLowerCase() as keyof typeof ColorManager.COLOR_MAP);
+                ColorManager.apply(circle, colorName.toLowerCase());
             }
 
             // Chip for title (keeping implementation for future use)
@@ -210,7 +210,7 @@ export class BoardView {
             if (this.data.cardOptions.colorHeaders && this.data.subGroupPropertyId && !this.data.groupPropertyId) {
                 const circle = rowHeader.createSpan('board-header-color-circle');
                 const colorName = this.getColorName(row.id, true) || 'grey';
-                ColorManager.apply(circle, colorName.toLowerCase() as keyof typeof ColorManager.COLOR_MAP);
+                ColorManager.apply(circle, colorName.toLowerCase());
             }
 
             // Chip for title (keeping implementation for future use)
@@ -302,7 +302,7 @@ export class BoardView {
             }
             // Apply colors based on options
             if (this.data.cardOptions.colorCells) {
-                ColorManager.apply(cell, effectiveColorName.toLowerCase() as keyof typeof ColorManager.COLOR_MAP);
+                ColorManager.apply(cell, effectiveColorName.toLowerCase());
             }
 
             const cardColorMode = this.data.cardOptions.colorCards ? 'minimal' : 'none';
@@ -345,9 +345,9 @@ export class BoardView {
 
             // Add "New Note" button
             const newNoteBtn = cell.createDiv('board-new-note-button');
-            newNoteBtn.textContent = '+ New Note';
-            newNoteBtn.addEventListener('click', async () => {
-                await callbacks.onNewNoteClick(column.rawValue, row?.rawValue);
+            newNoteBtn.textContent = 'New note';
+            newNoteBtn.addEventListener('click', () => {
+                callbacks.onNewNoteClick(column.rawValue, row?.rawValue);
             });
 
             this.setupSortable(cell, callbacks);
@@ -401,7 +401,7 @@ export class BoardView {
                     itemEl.parentNode.removeChild(itemEl);
                 }
 
-                const targetCell = evt.to as HTMLElement;
+                const targetCell = evt.to;
                 const newGroupId = targetCell.getAttribute('data-group-id') || null;
                 const newSubGroupId = targetCell.getAttribute('data-subgroup-id') || null;
 
@@ -413,7 +413,7 @@ export class BoardView {
                     const groupValue = column ? column.rawValue : newGroupId;
                     const subGroupValue = row ? row.rawValue : newSubGroupId;
 
-                    callbacks.onCardDrop(itemId, this.data.groupPropertyId, groupValue, this.data.subGroupPropertyId, subGroupValue);
+                    callbacks.onCardDrop(itemId, this.data.groupPropertyId, groupValue as (string | null | undefined), this.data.subGroupPropertyId, subGroupValue as (string | null | undefined));
                 }
             }
         });

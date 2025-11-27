@@ -12,7 +12,7 @@ export class BoardNoteCreator {
         subGroupPropertyId?: string | null;
     } | null = null;
 
-    async handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown, groupPropertyId?: string | null, subGroupPropertyId?: string | null): Promise<void> {
+    handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown, groupPropertyId?: string | null, subGroupPropertyId?: string | null): void {
         // Store the pending note info
         this.pendingNote = {
             groupValue,

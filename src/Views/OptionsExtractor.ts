@@ -81,15 +81,15 @@ export class OptionsExtractor {
         options.hideEmptyGroups = (this.config.get(BoardOptionKeys.HIDE_EMPTY_GROUPS) as boolean) || false;
         options.hideEmptySubGroups = (this.config.get(BoardOptionKeys.HIDE_EMPTY_SUB_GROUPS) as boolean) || false;
         options.cardSize = (this.config.get(BoardOptionKeys.CARD_SIZE) as 'small' | 'medium' | 'large') || 'medium';
-        options.openInSideView = (this.config.get(BoardOptionKeys.OPEN_IN_SIDE_VIEW) as boolean) || false;
+        options.openInSideView = (this.config.get(BoardOptionKeys.OPEN_IN_SIDE_VIEW) as boolean) || true;
         options.hiddenGroups = (this.config.get(BoardOptionKeys.HIDDEN_GROUPS) as string[]) || [];
         options.hiddenSubGroups = (this.config.get(BoardOptionKeys.HIDDEN_SUB_GROUPS) as string[]) || [];
         options.hideImagePlaceholder = (this.config.get(BoardOptionKeys.HIDE_IMAGE_PLACEHOLDER) as boolean) || false;
 
         // Color Options
-        options.colorHeaders = (this.config.get(BoardOptionKeys.COLOR_HEADERS) as boolean) || false;
+        options.colorHeaders = (this.config.get(BoardOptionKeys.COLOR_HEADERS) as boolean) || true;
         options.colorCells = (this.config.get(BoardOptionKeys.COLOR_CELLS) as boolean) || false;
-        options.colorCards = (this.config.get(BoardOptionKeys.COLOR_CARDS) as boolean) || false;
+        options.colorCards = (this.config.get(BoardOptionKeys.COLOR_CARDS) as boolean) || true;
 
         return options;
     }

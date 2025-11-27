@@ -1,7 +1,7 @@
 {
 	"id": "board-view",
 	"name": "Board View",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.10.3",
 	"description": "Interactive board view for bases, use as Kanban or Gallery, with grouping for rows and columns.",
 	"author": "Seventh",

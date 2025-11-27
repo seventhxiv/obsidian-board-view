@@ -28,7 +28,7 @@ export class BoardViewRenderer extends BasesView {
 
     // Called by Obsidian when Bases data changes
     public onDataUpdated(): void {
-        this.noteCreator.processPendingNote();
+        void this.noteCreator.processPendingNote();
         this.render();
     }
 
@@ -38,13 +38,13 @@ export class BoardViewRenderer extends BasesView {
         const boardData = this.extractBoardData(options);
 
         const callbacks: BoardViewCallbacks = {
-            onCardDrop: this.handleCardDrop.bind(this),
-            onHideGroup: this.hideGroup.bind(this),
-            onHideSubGroup: this.hideSubGroup.bind(this),
-            onMoveGroup: this.moveGroup.bind(this),
-            onMoveSubGroup: this.moveSubGroup.bind(this),
-            onSetColumnColor: this.setColumnColor.bind(this),
-            onNewNoteClick: this.handleNewNoteClick.bind(this),
+            onCardDrop: (...args) => { void this.handleCardDrop(...args); },
+            onHideGroup: (g) => this.hideGroup(g),
+            onHideSubGroup: (s) => this.hideSubGroup(s),
+            onMoveGroup: (g, d) => this.moveGroup(g, d),
+            onMoveSubGroup: (s, d) => this.moveSubGroup(s, d),
+            onSetColumnColor: (g, c, s) => { void this.setColumnColor(g, c, s); },
+            onNewNoteClick: (g, s) => this.handleNewNoteClick(g, s),
         };
         this.board.render(boardData, callbacks);
     }
@@ -61,9 +61,7 @@ export class BoardViewRenderer extends BasesView {
         return boardData;
     }
 
-    private async handleCardDrop(filePath: string, groupPropertyId: string, groupPropertyValue: unknown, subGroupPropertyId?: string | null, subGroupPropertyValue?: unknown) {
-        console.log(`[BoardViewRenderer] Card dropped: ${filePath} -> Group: ${groupPropertyValue}, SubGroup: ${subGroupPropertyValue}`);
-
+    private async handleCardDrop(filePath: string, groupPropertyId: string, groupPropertyValue?: string | null, subGroupPropertyId?: string | null, subGroupPropertyValue?: string | null) {
         // If drop target has formula group, don't update frontmatter
         if (groupPropertyId.startsWith('formula.') || subGroupPropertyId?.startsWith('formula.')) {
             new Notice('Cannot drop card into formula group');
@@ -156,9 +154,9 @@ export class BoardViewRenderer extends BasesView {
         this.render();
     }
 
-    private async handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown): Promise<void> {
+    private handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown): void {
         const options = this.extractOptions();
-        await this.noteCreator.handleNewNoteClick(
+        this.noteCreator.handleNewNoteClick(
             groupValue,
             subGroupValue,
             options.groupProperty,

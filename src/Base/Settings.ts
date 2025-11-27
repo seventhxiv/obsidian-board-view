@@ -16,7 +16,5 @@ export class BoardViewSettingTab extends PluginSettingTab {
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
-
-        containerEl.createEl('h2', { text: 'Board View settings' });
     }
 }

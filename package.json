@@ -6,7 +6,8 @@
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"lint": "eslint src/**/*.ts"
 	},
 	"keywords": [],
 	"author": "Seventh",
@@ -14,14 +15,15 @@
 	"devDependencies": {
 		"@types/node": "^16.11.6",
 		"@types/sortablejs": "^1.15.9",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
-		"builtin-modules": "3.3.0",
+		"@typescript-eslint/eslint-plugin": "^8.48.0",
+		"@typescript-eslint/parser": "^8.48.0",
+		"builtin-modules": "^3.3.0",
 		"esbuild": "0.17.3",
+		"eslint": "^9.39.1",
+		"eslint-plugin-obsidianmd": "^0.1.9",
 		"obsidian": "latest",
 		"sortablejs": "^1.15.6",
 		"tslib": "2.4.0",
 		"typescript": "^5.9.3"
-	},
-	"dependencies": {}
+	}
 }

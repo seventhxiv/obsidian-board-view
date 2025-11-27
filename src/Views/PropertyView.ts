@@ -34,39 +34,29 @@ export class PropertyView {
             if (iconVal?.isTruthy()) {
                 // Create container for icon + file name
                 propEl.classList.add('board-card-file-name-container');
-                propEl.style.display = 'flex';
-                propEl.style.alignItems = 'center';
-                propEl.style.paddingLeft = '6px';
 
                 // Create icon element
                 const iconEl = document.createElement('span');
                 iconEl.classList.add('board-card-icon');
-                iconEl.style.marginRight = '5px';
-                iconEl.style.display = 'inline-flex';
-                iconEl.style.alignItems = 'center';
                 setIcon(iconEl, iconVal.toString());
 
                 // Create file name element
                 const fileNameEl = document.createElement('div');
-                fileNameEl.classList.add('metadata-property-value', 'card-prop', 'file-name');
+                fileNameEl.classList.add('metadata-property-value', 'card-prop', 'file-name', 'board-card-file-name');
                 fileNameEl.classList.add('clickable');
-                fileNameEl.style.textDecoration = 'none';
                 fileNameEl.textContent = value.toString();
 
                 propEl.appendChild(iconEl);
                 propEl.appendChild(fileNameEl);
             } else {
                 // No icon, just render file name with padding
-                propEl.classList.add('metadata-property-value', 'card-prop', 'file-name');
+                propEl.classList.add('metadata-property-value', 'card-prop', 'file-name', 'board-card-file-name-no-icon');
                 propEl.classList.add('clickable');
-                propEl.style.textDecoration = 'none';
-                propEl.style.paddingLeft = '6px';
                 propEl.textContent = value.toString();
             }
 
         } else if (propId.startsWith('file.') || propId.startsWith('formula.')) {
             propEl.classList.add('metadata-property-value', 'card-prop');
-
             value.renderTo(propEl, new RenderContext());
 
         } else if (propId.startsWith('note.')) {

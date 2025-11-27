@@ -85,7 +85,7 @@ export class ColorManager {
         el.style.setProperty(`--${channel}-dark`, color.dark);
     }
 
-    static toRGBA(rgb: RGB | string, alpha: number): string {
+    static toRGBA(rgb: RGB, alpha: number): string {
         const match = rgb.match(/\d+/g);
 
         if (!match || match.length < 3) {

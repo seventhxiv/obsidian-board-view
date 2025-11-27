@@ -9,7 +9,7 @@ export default class Services {
     public static app: App;
     public static propertyManager: PropertyManager;
 
-    public static async initialize(plugin: BoardViewPlugin) {
+    public static initialize(plugin: BoardViewPlugin) {
         this.plugin = plugin;
         this.app = plugin.app;
         this.settings = plugin.settings;

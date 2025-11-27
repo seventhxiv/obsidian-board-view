@@ -37,42 +37,44 @@ export class CardView {
         }
         card.setAttribute('data-path', entry.file.path);
 
-        card.addEventListener('mouseup', async (evt) => {
-            // Only handle left mouse button
-            if (evt.button !== 0) {
-                return;
-            }
-
-            // Check if we clicked on an interactive property
-            if ((evt.target as HTMLElement).closest('.metadata-property')) {
-                return;
-            }
-
-            evt.preventDefault();
-            evt.stopPropagation();
-
-            if (this.options.openInSideView) {
-                const workspace = Services.app.workspace;
-                const activeLeaf = workspace.getLeaf(false);
-                let targetLeaf: WorkspaceLeaf | null = null;
-
-                (workspace as InternalWorkspace).iterateRootLeaves((leaf: WorkspaceLeaf) => {
-                    if (leaf !== activeLeaf) {
-                        targetLeaf = leaf;
-                    }
-                });
-
-                if (targetLeaf) {
-                    workspace.setActiveLeaf(targetLeaf, { focus: true });
-                    const newLeaf = workspace.getLeaf('tab');
-                    await newLeaf.openFile(entry.file);
-                } else {
-                    const newLeaf = workspace.getLeaf('split');
-                    await newLeaf.openFile(entry.file);
+        card.addEventListener('mouseup', (evt) => {
+            void (async () => {
+                // Only handle left mouse button
+                if (evt.button !== 0) {
+                    return;
                 }
-            } else {
-                void Services.app.workspace.openLinkText(entry.file.path, '', true);
-            }
+
+                // Check if we clicked on an interactive property
+                if ((evt.target as HTMLElement).closest('.metadata-property')) {
+                    return;
+                }
+
+                evt.preventDefault();
+                evt.stopPropagation();
+
+                if (this.options.openInSideView) {
+                    const workspace = Services.app.workspace;
+                    const activeLeaf = workspace.getLeaf(false);
+                    let targetLeaf: WorkspaceLeaf | null = null;
+
+                    (workspace as InternalWorkspace).iterateRootLeaves((leaf: WorkspaceLeaf) => {
+                        if (leaf !== activeLeaf) {
+                            targetLeaf = leaf;
+                        }
+                    });
+
+                    if (targetLeaf) {
+                        workspace.setActiveLeaf(targetLeaf, { focus: true });
+                        const newLeaf = workspace.getLeaf('tab');
+                        await newLeaf.openFile(entry.file);
+                    } else {
+                        const newLeaf = workspace.getLeaf('split');
+                        await newLeaf.openFile(entry.file);
+                    }
+                } else {
+                    void Services.app.workspace.openLinkText(entry.file.path, '', true);
+                }
+            })();
         });
 
         card.addEventListener('contextmenu', (evt) => {
@@ -85,9 +87,9 @@ export class CardView {
         // Apply color based on mode
         if (this.colorName && this.cardColorMode !== 'none') {
             if (this.cardColorMode === 'full') {
-                ColorManager.apply(card, this.colorName.toLowerCase() as keyof typeof ColorManager.COLOR_MAP);
+                ColorManager.apply(card, this.colorName.toLowerCase());
             } else if (this.cardColorMode === 'minimal') {
-                ColorManager.applyBorderLine(card, this.colorName.toLowerCase() as keyof typeof ColorManager.COLOR_MAP);
+                ColorManager.applyBorderLine(card, this.colorName.toLowerCase());
             }
         }
 
