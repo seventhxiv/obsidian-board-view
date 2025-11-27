@@ -1,0 +1,424 @@
+body {
+    --board-view-column-width: 280px;
+    --board-view-column-width-small: 240px;
+    --board-view-column-width-large: 310px;
+
+    --board-view-card-font-size-small: 0.9em;
+    --board-view-card-font-size-large: 1.1em;
+
+    --board-view-plugin-image-height: 140px;
+    --board-view-plugin-image-height-small: 112px;
+    --board-view-plugin-image-height-large: 168px;
+}
+
+.board-view {
+    font-size: var(--font-ui-small);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.board-board-container {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.board-board-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+    overflow: auto;
+    height: 100%;
+}
+
+.board-column-headers {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.board-column-header-spacer {
+    min-width: 20px;
+    /* Adjust based on collapse icon width? Or maybe 0 if row header is above */
+    display: none;
+    /* Since row header is now above, we don't need left spacer */
+}
+
+.board-column-header {
+    width: var(--board-view-column-width);
+    flex-shrink: 0;
+    font-weight: 600;
+    padding: 10px;
+    background: var(--background-modifier-slight);
+    border-radius: 10px;
+    text-align: left;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: var(--font-ui-small);
+}
+
+.board-header-chip {
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.board-header-color-circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-flex;
+    flex-shrink: 0;
+    /* margin-right: 8px; */
+}
+
+.board-header-color-circle.has-plugin-color {
+    background-color: color-mix(in srgb, var(--active-color) 100%, transparent);
+}
+
+.board-header-count {
+    font-size: var(--font-ui-small);
+    color: var(--text-faint);
+    /* background: var(--background-modifier-border); */
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+/* ColorManager theme switching for plugin colors */
+.theme-light .has-plugin-color {
+    --active-color: var(--c-light);
+}
+
+.theme-dark .has-plugin-color {
+    --active-color: var(--c-dark);
+}
+
+/* Card border line (minimal mode) */
+.theme-light .has-plugin-color-border {
+    --active-color: var(--c-light);
+}
+
+.theme-dark .has-plugin-color-border {
+    --active-color: var(--c-dark);
+}
+
+.board-card.has-plugin-color-border {
+    border-left: 4px solid color-mix(in srgb, var(--active-color) 100%, transparent);
+    padding-left: 8px;
+}
+
+/* Cells/headers use lower opacity via color-mix */
+.board-header-chip.has-plugin-color {
+    background-color: color-mix(in srgb, var(--active-color) 100%, transparent);
+}
+
+.board-cell.has-plugin-color {
+    background-color: color-mix(in srgb, var(--active-color) 20%, transparent);
+}
+
+/* Cards use full color - not used */
+.board-card.has-plugin-color {
+    background-color: color-mix(in srgb, var(--active-color) 0%, transparent);
+}
+
+.board-header-menu {
+    position: absolute;
+    right: 8px;
+    opacity: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+}
+
+.board-row-header-bar .board-header-menu {
+    /* Override for row headers - position inline instead of absolute */
+    position: relative;
+    right: auto;
+    margin-left: 4px;
+}
+
+.board-header-menu:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.board-column-header:hover .board-header-menu,
+.board-row-header-bar:hover .board-header-menu {
+    opacity: 1;
+}
+
+.board-row-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.board-row-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 8px;
+    font-weight: 600;
+    position: relative;
+    /* Align with card columns - no left margin needed as we'll position within row-wrapper */
+    width: fit-content;
+    font-size: var(--font-ui-small);
+    padding-left: 0px;
+}
+
+.board-row-title {
+    /* font-size: 1.1em; */
+    /* Match main header size (inherit or 1em) */
+    font-size: 1em;
+    margin-right: 0px;
+}
+
+.board-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.board-row-cells {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+}
+
+.board-cell {
+    width: var(--board-view-column-width);
+    flex-shrink: 0;
+    padding: 8px;
+    border-radius: 10px;
+    /* background: var(--background-secondary); */
+    min-height: 50px;
+}
+
+.board-card {
+    /* background: var(--background-primary); */
+    width: 100%;
+    background: var(--background-secondary);
+    border: none;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+/* Force grab cursor on properties to override input text cursor */
+.board-card .metadata-property,
+.board-card .metadata-property-value,
+.board-card .metadata-property-value * {
+    cursor: pointer !important;
+    font-size: var(--font-ui-small);
+}
+
+.board-card .metadata-property-value .metadata-input-longtext {
+    min-height: 28px;
+}
+
+.board-card .metadata-property-value .clickable-icon {
+    padding: 0px;
+    /* Remove padding on date icon which forces height */
+}
+
+/* Card Sizes */
+.board-board-wrapper.card-size-small {
+    --board-view-column-width: var(--board-view-column-width-small);
+}
+
+.board-board-wrapper.card-size-large {
+    --board-view-column-width: var(--board-view-column-width-large);
+}
+
+.board-card.card-size-small {
+    font-size: var(--board-view-card-font-size-small);
+}
+
+.board-card.card-size-large {
+    font-size: var(--board-view-card-font-size-large);
+}
+
+.board-card .card-image {
+    width: 100%;
+    height: var(--board-view-plugin-image-height);
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 6px;
+}
+
+.board-card.card-size-small .card-image {
+    height: var(--board-view-plugin-image-height-small);
+}
+
+.board-card.card-size-large .card-image {
+    height: var(--board-view-plugin-image-height-large);
+}
+
+.board-card .card-image.placeholder {
+    background-color: var(--background-modifier-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board-card .card-prop.clickable {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.board-row-wrapper.collapsed .board-row {
+    display: none;
+}
+
+.board-row-wrapper.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.collapse-icon {
+    transition: transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+/* SortableJS Ghost - Hide the placeholder (since we use blue lines) */
+.board-sortable-ghost {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+    overflow: hidden;
+    /* background-color: red; */
+}
+
+/* BUT show the ghost in the source list so the original item doesn't disappear */
+.board-drag-source .board-sortable-ghost {
+    opacity: 0.5;
+    height: auto;
+    padding: 8px;
+    /* Restore padding */
+    margin-bottom: 8px;
+    /* Restore margin */
+    border: 1px solid var(--background-modifier-border);
+    /* Restore border */
+    overflow: visible;
+    display: block;
+}
+
+/* SortableJS Chosen - The original item stays in place and is dimmed */
+.board-sortable-chosen {
+    opacity: 0.5;
+    /* background-color: blue; */
+}
+
+/* Drop Target Indicators */
+.board-item-drop-target-top {
+    border-top: 2px solid var(--interactive-accent) !important;
+    margin-top: -2px;
+    /* position: absolute; */
+    /* Prevent layout shift */
+}
+
+.board-item-drop-target-bottom {
+    border-bottom: 2px solid var(--interactive-accent) !important;
+    margin-bottom: -2px;
+    /* position: absolute; */
+    /* Prevent layout shift */
+}
+
+/* New Note Button */
+.board-new-note-button {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 10px;
+    padding: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 14px;
+    transition: opacity 0.2s, background-color 0.2s;
+    text-align: left;
+}
+
+.board-new-note-button:hover {
+    opacity: 0.7;
+    background: var(--background-modifier-hover);
+}
+
+.board-card .file-name {
+    font-size: var(--font-ui-medium);
+    /* font-size: var(--table-text-size); */
+    font-weight: calc(var(--font-weight) + var(--bold-modifier));
+}
+/* Gallery View for Sub-groups */
+.board-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.board-rows-container.is-gallery {
+    flex-direction: column; /* Keep rows stacked vertically */
+    gap: 12px;
+}
+
+.board-rows-container.is-gallery .board-row-wrapper {
+    width: 100%; /* Full width for each row */
+    margin-bottom: 0;
+}
+
+.board-rows-container.is-gallery .board-row-header-bar {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.board-rows-container.is-gallery .board-row {
+    flex: 1;
+    overflow: visible; /* Allow wrapping */
+}
+
+.board-rows-container.is-gallery .board-row-cells {
+    flex-direction: row; /* This is the key - make cells flow horizontally */
+}
+
+.board-rows-container.is-gallery .board-cell {
+    width: 100%; /* Take full width since there's only one cell */
+    padding: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: row; /* Make cards flow horizontally */
+    flex-wrap: wrap; /* Allow cards to wrap to next line */
+    gap: 8px; /* Space between cards */
+}
+
+/* In gallery mode, cards should have a fixed width */
+.board-rows-container.is-gallery .board-card {
+    width: var(--board-view-column-width);
+    flex: 0 0 var(--board-view-column-width);
+    margin-bottom: 0; /* Remove margin since we use gap */
+}
+
+/* New Note button in gallery mode */
+.board-rows-container.is-gallery .board-new-note-button {
+    width: var(--board-view-column-width);
+    flex: 0 0 var(--board-view-column-width);
+    margin-top: 0;
+}
+
