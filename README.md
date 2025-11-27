@@ -21,6 +21,10 @@ Interactive Board view for bases, use as Kanban or Gallery, with grouping for ro
 3. Configure Board options (grouping, colors, etc.)
 4. Drag cards between groups to update note properties
 
+## Why make it if obsidian has kanban on roadmap ?
+1. I need both column & row grouping (which almost never gets added)
+2. It was fun
+
 ## Installation
 
 ### From Obsidian Community Plugins
