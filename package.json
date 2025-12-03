@@ -1,6 +1,6 @@
 {
 	"name": "board-view",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "Interactive board view for bases, use as Kanban or Gallery, with grouping for rows and columns.",
 	"main": "src/main.js",
 	"scripts": {
