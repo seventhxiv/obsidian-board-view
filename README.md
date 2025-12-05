@@ -27,7 +27,7 @@ Interactive Board view for bases, use as Kanban or Gallery, with grouping for ro
 
 ## Installation
 
-### From Obsidian Community Plugins
+### [Under review to get added] From Obsidian Community Plugins
 
 1. Open Settings → Community Plugins
 2. Search for "Board View"
