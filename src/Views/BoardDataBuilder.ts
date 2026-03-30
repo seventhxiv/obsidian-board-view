@@ -78,24 +78,42 @@ export class BoardViewDataBuilder {
             }
         }
 
-        // From vault (if not hiding empty)
+        // From groupOrder or vault (if not hiding empty)
         if (!options.hideEmptyGroups && groupPropertyId) {
-            const propertyManager = new PropertyManager();
-            const allValues = propertyManager.getPropertyValues(getPropertyKeyFromId(groupPropertyId));
-            for (const val of allValues) {
-                if (!groupValues.has(val)) {
-                    groupValues.set(val, val);
+            const groupOrder = options.groupOrder || [];
+            if (groupOrder.length > 0) {
+                for (const val of groupOrder) {
+                    if (!groupValues.has(val)) {
+                        groupValues.set(val, val);
+                    }
+                }
+            } else {
+                const propertyManager = new PropertyManager();
+                const allValues = propertyManager.getPropertyValues(getPropertyKeyFromId(groupPropertyId));
+                for (const val of allValues) {
+                    if (!groupValues.has(val)) {
+                        groupValues.set(val, val);
+                    }
                 }
             }
             if (!groupValues.has(EMPTY_GROUP_VALUE)) groupValues.set(EMPTY_GROUP_VALUE, null);
         }
 
         if (!options.hideEmptySubGroups && subGroupPropertyId) {
-            const propertyManager = new PropertyManager();
-            const allValues = propertyManager.getPropertyValues(getPropertyKeyFromId(subGroupPropertyId));
-            for (const val of allValues) {
-                if (!subGroupValues.has(val)) {
-                    subGroupValues.set(val, val);
+            const subGroupOrder = options.subGroupOrder || [];
+            if (subGroupOrder.length > 0) {
+                for (const val of subGroupOrder) {
+                    if (!subGroupValues.has(val)) {
+                        subGroupValues.set(val, val);
+                    }
+                }
+            } else {
+                const propertyManager = new PropertyManager();
+                const allValues = propertyManager.getPropertyValues(getPropertyKeyFromId(subGroupPropertyId));
+                for (const val of allValues) {
+                    if (!subGroupValues.has(val)) {
+                        subGroupValues.set(val, val);
+                    }
                 }
             }
             if (!subGroupValues.has(EMPTY_GROUP_VALUE)) subGroupValues.set(EMPTY_GROUP_VALUE, null);

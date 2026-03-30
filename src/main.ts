@@ -105,7 +105,7 @@ export default class BoardViewPlugin extends Plugin {
 							displayName: 'Hide empty groups',
 							key: BoardOptionKeys.HIDE_EMPTY_GROUPS,
 							default: false,
-							description: 'Hide empty groups (columns)',
+							description: 'Hide groups with no cards. When off, groups from Group order are always shown',
 						},
 						{
 							type: 'multitext',
