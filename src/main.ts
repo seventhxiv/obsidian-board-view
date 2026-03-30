@@ -105,7 +105,7 @@ export default class BoardViewPlugin extends Plugin {
 							displayName: 'Hide empty groups',
 							key: BoardOptionKeys.HIDE_EMPTY_GROUPS,
 							default: false,
-							description: 'Hide empty groups (columns)',
+							description: 'Hide groups with no cards. When off, groups from Group order are always shown',
 						},
 						{
 							type: 'multitext',
@@ -120,6 +120,13 @@ export default class BoardViewPlugin extends Plugin {
 							key: BoardOptionKeys.GROUP_ORDER,
 							default: [],
 							description: 'Order of main group (columns)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Group labels',
+							key: BoardOptionKeys.GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for groups, format: value=Label',
 						},
 					]
 				},
@@ -156,6 +163,13 @@ export default class BoardViewPlugin extends Plugin {
 							default: [],
 							description: 'Order of sub group (rows)',
 						},
+						{
+							type: 'multitext',
+							displayName: 'Sub Group labels',
+							key: BoardOptionKeys.SUB_GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for sub-groups, format: value=Label',
+						},
 					]
 				},
 				{
@@ -177,6 +191,33 @@ export default class BoardViewPlugin extends Plugin {
 							default: true,
 							description: 'Hide grey placeholder if image is missing',
 						}
+					]
+				},
+				{
+					type: 'group',
+					displayName: 'New Note',
+					items: [
+						{
+							type: 'multitext',
+							displayName: 'Folder',
+							key: BoardOptionKeys.NEW_NOTE_FOLDER,
+							default: [],
+							description: 'Folder path for new notes (e.g. Projects/Tasks)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Template',
+							key: BoardOptionKeys.NEW_NOTE_TEMPLATE,
+							default: [],
+							description: 'Template file path. Supports Templater if installed (e.g. Templates/Task.md)',
+						},
+						{
+							type: 'toggle',
+							displayName: 'Open after creation',
+							key: BoardOptionKeys.NEW_NOTE_OPEN,
+							default: false,
+							description: 'Open the new note after creating it',
+						},
 					]
 				},
 			]),
