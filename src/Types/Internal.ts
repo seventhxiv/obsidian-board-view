@@ -1,4 +1,4 @@
-import { App, Menu, MenuItem, MetadataCache, TFile, Value, Workspace, WorkspaceLeaf } from "obsidian";
+import { App, FileManager, Menu, MenuItem, MetadataCache, TFile, TFolder, Value, Workspace, WorkspaceLeaf } from "obsidian";
 
 export interface MetadataTypeManager {
     registeredTypeWidgets: Record<string, unknown>;
@@ -22,6 +22,10 @@ export interface InternalMenuItem extends MenuItem {
 
 export interface InternalMetadataCache extends MetadataCache {
     getFrontmatterPropertyValuesForKey(key: string): string[];
+}
+
+export interface InternalFileManager extends FileManager {
+    createNewMarkdownFile(folder: TFolder, filename: string): Promise<TFile>;
 }
 
 export interface PropertyData extends Value {

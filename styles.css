@@ -454,3 +454,50 @@ body {
     text-decoration: none;
     padding-left: 6px;
 }
+
+.card-id {
+    padding-left: 6px;
+    font-size: var(--font-ui-smaller);
+    opacity: 0.45;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Icon Picker Modal */
+.icon-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 4px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.icon-picker-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.icon-picker-item:hover {
+    background: var(--background-modifier-hover);
+}
+
+.icon-picker-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
+}
+
+.icon-picker-name {
+    font-size: 10px;
+    color: var(--text-muted);
+    word-break: break-all;
+    line-height: 1.2;
+}

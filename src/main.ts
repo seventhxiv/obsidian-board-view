@@ -3,6 +3,7 @@ import { BoardViewSettingTab, BoardViewSettings, DEFAULT_SETTINGS } from 'Base/S
 import { Plugin, QueryController } from 'obsidian';
 import { getPropertyKeyFromId } from 'Utils';
 import { BoardViewRenderer } from 'Views/BoardViewRenderer';
+import { IconPickerModal } from 'Views/IconPickerModal';
 import { BoardOptionKeys } from 'Views/OptionsExtractor';
 import Services from './Base/Services';
 
@@ -21,6 +22,13 @@ export default class BoardViewPlugin extends Plugin {
 
 		// Initialize plugin UI (ribbon icons, commands)
 		PluginInterface.initialize();
+
+		// Icon picker command
+		this.addCommand({
+			id: 'browse-icons',
+			name: 'Browse icons',
+			callback: () => new IconPickerModal(this.app).open(),
+		});
 
 		// Add settings tab
 		this.addSettingTab(new BoardViewSettingTab(this.app, this));
@@ -51,6 +59,21 @@ export default class BoardViewPlugin extends Plugin {
 							filter: (prop: string) => Services.plugin.isPropertyEligibleForGrouping(prop),
 							default: '',
 							description: 'Enter the property ID to display as card icon',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Icon mapping',
+							key: BoardOptionKeys.ICON_MAPPING,
+							default: [],
+							description: 'Map property values to icon names. Format: value=icon-name (e.g. bug=bug, feature=sparkles). Use "Board View: Browse icons" command to search icons.',
+						},
+						{
+							type: 'property',
+							displayName: 'ID Property',
+							key: BoardOptionKeys.ID_PROPERTY,
+							filter: (prop: string) => Services.plugin.isPropertyEligibleForGrouping(prop),
+							default: '',
+							description: 'Property to show as a muted ID above the card title. Click copies it to clipboard.',
 						},
 						{
 							type: 'toggle',
@@ -105,7 +128,7 @@ export default class BoardViewPlugin extends Plugin {
 							displayName: 'Hide empty groups',
 							key: BoardOptionKeys.HIDE_EMPTY_GROUPS,
 							default: false,
-							description: 'Hide empty groups (columns)',
+							description: 'Hide groups with no cards. When off, groups from Group order are always shown',
 						},
 						{
 							type: 'multitext',
@@ -120,6 +143,13 @@ export default class BoardViewPlugin extends Plugin {
 							key: BoardOptionKeys.GROUP_ORDER,
 							default: [],
 							description: 'Order of main group (columns)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Group labels',
+							key: BoardOptionKeys.GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for groups, format: value=Label',
 						},
 					]
 				},
@@ -156,6 +186,13 @@ export default class BoardViewPlugin extends Plugin {
 							default: [],
 							description: 'Order of sub group (rows)',
 						},
+						{
+							type: 'multitext',
+							displayName: 'Sub Group labels',
+							key: BoardOptionKeys.SUB_GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for sub-groups, format: value=Label',
+						},
 					]
 				},
 				{
@@ -177,6 +214,33 @@ export default class BoardViewPlugin extends Plugin {
 							default: true,
 							description: 'Hide grey placeholder if image is missing',
 						}
+					]
+				},
+				{
+					type: 'group',
+					displayName: 'New Note',
+					items: [
+						{
+							type: 'multitext',
+							displayName: 'Folder',
+							key: BoardOptionKeys.NEW_NOTE_FOLDER,
+							default: [],
+							description: 'Folder path for new notes (e.g. Projects/Tasks)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Template',
+							key: BoardOptionKeys.NEW_NOTE_TEMPLATE,
+							default: [],
+							description: 'Template file path. Supports Templater if installed (e.g. Templates/Task.md)',
+						},
+						{
+							type: 'toggle',
+							displayName: 'Open after creation',
+							key: BoardOptionKeys.NEW_NOTE_OPEN,
+							default: false,
+							description: 'Open the new note after creating it',
+						},
 					]
 				},
 			]),

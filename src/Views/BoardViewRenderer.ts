@@ -1,7 +1,7 @@
 import Services from 'Base/Services';
 import { getPropertyKeyFromId } from 'Utils';
 import { BASES_VIEW_ID } from 'main';
-import { BasesView, Notice, QueryController } from 'obsidian';
+import { BasesView, Modal, Notice, QueryController } from 'obsidian';
 import { BoardViewDataBuilder } from './BoardDataBuilder';
 import { BoardNoteCreator } from './BoardNoteCreator';
 import { BoardView, BoardViewCallbacks, BoardViewData } from './BoardView';
@@ -9,14 +9,18 @@ import { BoardOptionKeys, BoardOptions, OptionsExtractor } from './OptionsExtrac
 
 export const EMPTY_GROUP_VALUE = 'Empty Group';
 
+let instanceCounter = 0;
+
 export class BoardViewRenderer extends BasesView {
     readonly type = BASES_VIEW_ID;
+    private readonly slWatchId: string;
     private containerEl: HTMLElement;
     public controller: QueryController;
     private board: BoardView;
     private noteCreator: BoardNoteCreator;
     constructor(controller: QueryController, parentEl: HTMLElement) {
         super(controller);
+        this.slWatchId = `board-view-${++instanceCounter}`;
         this.controller = controller;
         this.containerEl = parentEl.createDiv('board-view');
         const boardContainer = this.containerEl.createDiv('board-board-container');
@@ -24,6 +28,16 @@ export class BoardViewRenderer extends BasesView {
         // Initialize BoardView
         this.board = new BoardView(boardContainer);
         this.noteCreator = new BoardNoteCreator();
+        this.hookSuperchargedLinks(boardContainer);
+
+        // Re-render when the board becomes visible (handles embed case where SL may
+        // have cleared attrs while the tab was inactive). registerEvent ensures cleanup.
+        this.registerEvent(Services.app.workspace.on('active-leaf-change', () => {
+            const activeLeafEl = Services.app.workspace.activeLeaf?.view?.containerEl;
+            if (activeLeafEl?.contains(boardContainer)) {
+                this.render();
+            }
+        }));
     }
 
     // Called by Obsidian when Bases data changes
@@ -45,8 +59,19 @@ export class BoardViewRenderer extends BasesView {
             onMoveSubGroup: (s, d) => this.moveSubGroup(s, d),
             onSetColumnColor: (g, c, s) => { void this.setColumnColor(g, c, s); },
             onNewNoteClick: (g, s) => this.handleNewNoteClick(g, s),
+            onRenameGroup: (g, l) => this.openRenameModal(g, l, false),
+            onRenameSubGroup: (s, l) => this.openRenameModal(s, l, true),
         };
         this.board.render(boardData, callbacks);
+        this.updateSlContainer();
+    }
+
+    private updateSlContainer(): void {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sl = (Services.app as any).plugins?.plugins?.['supercharged-links-obsidian'];
+        if (!sl || typeof sl.updateContainer !== 'function') return;
+        // Widget renders (link pills) are async — wait for them before asking SL to process
+        setTimeout(() => sl.updateContainer(this.containerEl, sl, '[data-href]'), 100);
     }
 
     private extractOptions(): BoardOptions {
@@ -154,14 +179,85 @@ export class BoardViewRenderer extends BasesView {
         this.render();
     }
 
+    private openRenameModal(value: string, currentLabel: string, isSubGroup: boolean) {
+        const modal = new RenameModal(Services.app, currentLabel, (newLabel) => {
+            const key = isSubGroup ? BoardOptionKeys.SUB_GROUP_LABELS : BoardOptionKeys.GROUP_LABELS;
+            const current = (this.config.get(key) as string[]) || [];
+            const prefix = `${value}=`;
+            const filtered = current.filter(e => !e.startsWith(prefix));
+            if (newLabel.trim()) {
+                filtered.push(`${value}=${newLabel.trim()}`);
+            }
+            this.config.set(key, filtered);
+        });
+        modal.open();
+    }
+
+    private hookSuperchargedLinks(container: HTMLElement): void {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sl = (Services.app as any).plugins?.plugins?.['supercharged-links-obsidian'];
+        if (!sl || typeof sl._watchContainerDynamic !== 'function') return;
+        sl._watchContainerDynamic(
+            this.slWatchId,
+            container,
+            sl,
+            '.internal-link',
+            'board-card',
+        );
+    }
+
     private handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown): void {
         const options = this.extractOptions();
         this.noteCreator.handleNewNoteClick(
             groupValue,
             subGroupValue,
             options.groupProperty,
-            options.subGroupProperty
+            options.subGroupProperty,
+            options
         );
     }
 
+}
+
+class RenameModal extends Modal {
+    private currentLabel: string;
+    private onSubmit: (newLabel: string) => void;
+
+    constructor(app: import('obsidian').App, currentLabel: string, onSubmit: (newLabel: string) => void) {
+        super(app);
+        this.currentLabel = currentLabel;
+        this.onSubmit = onSubmit;
+    }
+
+    onOpen() {
+        const { contentEl, modalEl } = this;
+        modalEl.style.width = '320px';
+        modalEl.style.minWidth = 'unset';
+        contentEl.style.padding = '16px';
+
+        const input = contentEl.createEl('input', { type: 'text' });
+        input.value = this.currentLabel;
+        input.placeholder = 'Display name';
+        input.style.width = '100%';
+        input.style.marginBottom = '12px';
+
+        const submit = () => {
+            this.onSubmit(input.value);
+            this.close();
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submit();
+            if (e.key === 'Escape') this.close();
+        });
+
+        const btn = contentEl.createEl('button', { text: 'Rename' });
+        btn.addEventListener('click', submit);
+
+        setTimeout(() => { input.focus(); input.select(); }, 50);
+    }
+
+    onClose() {
+        this.contentEl.empty();
+    }
 }
