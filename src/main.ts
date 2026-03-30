@@ -105,7 +105,7 @@ export default class BoardViewPlugin extends Plugin {
 							displayName: 'Hide empty groups',
 							key: BoardOptionKeys.HIDE_EMPTY_GROUPS,
 							default: false,
-							description: 'Hide empty groups (columns)',
+							description: 'Hide groups with no cards. When off, groups from Group order are always shown',
 						},
 						{
 							type: 'multitext',
@@ -120,6 +120,13 @@ export default class BoardViewPlugin extends Plugin {
 							key: BoardOptionKeys.GROUP_ORDER,
 							default: [],
 							description: 'Order of main group (columns)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Group labels',
+							key: BoardOptionKeys.GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for groups, format: value=Label',
 						},
 					]
 				},
@@ -155,6 +162,13 @@ export default class BoardViewPlugin extends Plugin {
 							key: BoardOptionKeys.SUB_GROUP_ORDER,
 							default: [],
 							description: 'Order of sub group (rows)',
+						},
+						{
+							type: 'multitext',
+							displayName: 'Sub Group labels',
+							key: BoardOptionKeys.SUB_GROUP_LABELS,
+							default: [],
+							description: 'Custom display names for sub-groups, format: value=Label',
 						},
 					]
 				},

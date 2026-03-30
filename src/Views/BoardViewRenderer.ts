@@ -1,7 +1,7 @@
 import Services from 'Base/Services';
 import { getPropertyKeyFromId } from 'Utils';
 import { BASES_VIEW_ID } from 'main';
-import { BasesView, Notice, QueryController } from 'obsidian';
+import { BasesView, Modal, Notice, QueryController } from 'obsidian';
 import { BoardViewDataBuilder } from './BoardDataBuilder';
 import { BoardNoteCreator } from './BoardNoteCreator';
 import { BoardView, BoardViewCallbacks, BoardViewData } from './BoardView';
@@ -45,6 +45,8 @@ export class BoardViewRenderer extends BasesView {
             onMoveSubGroup: (s, d) => this.moveSubGroup(s, d),
             onSetColumnColor: (g, c, s) => { void this.setColumnColor(g, c, s); },
             onNewNoteClick: (g, s) => this.handleNewNoteClick(g, s),
+            onRenameGroup: (g, l) => this.openRenameModal(g, l, false),
+            onRenameSubGroup: (s, l) => this.openRenameModal(s, l, true),
         };
         this.board.render(boardData, callbacks);
     }
@@ -154,6 +156,20 @@ export class BoardViewRenderer extends BasesView {
         this.render();
     }
 
+    private openRenameModal(value: string, currentLabel: string, isSubGroup: boolean) {
+        const modal = new RenameModal(Services.app, currentLabel, (newLabel) => {
+            const key = isSubGroup ? BoardOptionKeys.SUB_GROUP_LABELS : BoardOptionKeys.GROUP_LABELS;
+            const current = (this.config.get(key) as string[]) || [];
+            const prefix = `${value}=`;
+            const filtered = current.filter(e => !e.startsWith(prefix));
+            if (newLabel.trim()) {
+                filtered.push(`${value}=${newLabel.trim()}`);
+            }
+            this.config.set(key, filtered);
+        });
+        modal.open();
+    }
+
     private handleNewNoteClick(groupValue: unknown, subGroupValue?: unknown): void {
         const options = this.extractOptions();
         this.noteCreator.handleNewNoteClick(
@@ -164,4 +180,47 @@ export class BoardViewRenderer extends BasesView {
         );
     }
 
+}
+
+class RenameModal extends Modal {
+    private currentLabel: string;
+    private onSubmit: (newLabel: string) => void;
+
+    constructor(app: import('obsidian').App, currentLabel: string, onSubmit: (newLabel: string) => void) {
+        super(app);
+        this.currentLabel = currentLabel;
+        this.onSubmit = onSubmit;
+    }
+
+    onOpen() {
+        const { contentEl, modalEl } = this;
+        modalEl.style.width = '320px';
+        modalEl.style.minWidth = 'unset';
+        contentEl.style.padding = '16px';
+
+        const input = contentEl.createEl('input', { type: 'text' });
+        input.value = this.currentLabel;
+        input.placeholder = 'Display name';
+        input.style.width = '100%';
+        input.style.marginBottom = '12px';
+
+        const submit = () => {
+            this.onSubmit(input.value);
+            this.close();
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submit();
+            if (e.key === 'Escape') this.close();
+        });
+
+        const btn = contentEl.createEl('button', { text: 'Rename' });
+        btn.addEventListener('click', submit);
+
+        setTimeout(() => { input.focus(); input.select(); }, 50);
+    }
+
+    onClose() {
+        this.contentEl.empty();
+    }
 }
