@@ -7,6 +7,7 @@ export const BoardOptionKeys = {
     SUB_GROUP_PROPERTY: 'subGroupProperty',
     IMAGE_PROPERTY: 'imageProperty',
     ICON_PROPERTY: 'iconProperty',
+    ID_PROPERTY: 'idProperty',
     GROUP_ORDER: 'groupOrder',
     SUB_GROUP_ORDER: 'subGroupOrder',
     HIDE_EMPTY_GROUPS: 'hideEmptyGroups',
@@ -28,6 +29,7 @@ export interface BoardOptions {
     subGroupProperty?: BasesPropertyId | null;
     imageProperty?: BasesPropertyId | null;
     iconProperty?: BasesPropertyId | null;
+    idProperty?: BasesPropertyId | null;
     groupOrder?: string[];
     subGroupOrder?: string[];
     hideEmptyGroups?: boolean;
@@ -76,6 +78,7 @@ export class OptionsExtractor {
         options.subGroupProperty = subGroupProperty;
         options.imageProperty = (this.config.get(BoardOptionKeys.IMAGE_PROPERTY) as BasesPropertyId | null) || null;
         options.iconProperty = (this.config.get(BoardOptionKeys.ICON_PROPERTY) as BasesPropertyId | null) || null;
+        options.idProperty = (this.config.get(BoardOptionKeys.ID_PROPERTY) as BasesPropertyId | null) || null;
         options.groupOrder = (this.config.get(BoardOptionKeys.GROUP_ORDER) as string[]) || [];
         options.subGroupOrder = (this.config.get(BoardOptionKeys.SUB_GROUP_ORDER) as string[]) || [];
         options.hideEmptyGroups = (this.config.get(BoardOptionKeys.HIDE_EMPTY_GROUPS) as boolean) || false;

@@ -454,3 +454,11 @@ body {
     text-decoration: none;
     padding-left: 6px;
 }
+
+.card-id {
+    padding-left: 6px;
+    font-size: var(--font-ui-smaller);
+    opacity: 0.45;
+    cursor: pointer;
+    user-select: none;
+}

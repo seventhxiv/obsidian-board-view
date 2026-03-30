@@ -1,6 +1,7 @@
-import { BasesEntry, Menu, WorkspaceLeaf } from 'obsidian';
+import { BasesEntry, Menu, Modal, Notice, WorkspaceLeaf } from 'obsidian';
 import { InternalWorkspace } from 'Types/Internal';
 import Services from '../Base/Services';
+import { getPropertyKeyFromId } from 'Utils';
 import { ColorManager } from './ColorManager';
 import { BoardOptions } from './OptionsExtractor';
 import { PropertyView } from './PropertyView';
@@ -113,6 +114,40 @@ export class CardView {
             }
         }
 
+        // ID badge above title
+        if (this.options.idProperty) {
+            const idPropertyId = this.options.idProperty;
+            const idValue = entry.getValue(idPropertyId);
+            if (idValue?.isTruthy()) {
+                const idText = idValue.toString();
+                const idEl = document.createElement('div');
+                idEl.classList.add('card-id');
+                idEl.textContent = idText;
+
+                idEl.addEventListener('mouseup', (evt) => { evt.stopPropagation(); });
+
+                idEl.addEventListener('click', (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    navigator.clipboard.writeText(idText);
+                    new Notice(`Copied: ${idText}`, 1500);
+                });
+
+                idEl.addEventListener('contextmenu', (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    const modal = new IdEditModal(Services.app, idText, async (newValue) => {
+                        const key = getPropertyKeyFromId(idPropertyId);
+                        const file = Services.propertyManager.getFile(entry.file.path);
+                        if (file) await Services.propertyManager.updateFrontmatter(file, key, newValue);
+                    });
+                    modal.open();
+                });
+
+                card.appendChild(idEl);
+            }
+        }
+
         // create PropertyView helper
         const propertyView = new PropertyView({
             options: this.options
@@ -127,4 +162,31 @@ export class CardView {
 
         return card;
     }
+}
+
+class IdEditModal extends Modal {
+    constructor(
+        app: import('obsidian').App,
+        private currentValue: string,
+        private onSubmit: (newValue: string) => Promise<void>
+    ) { super(app); }
+
+    onOpen() {
+        const { contentEl, modalEl } = this;
+        modalEl.style.width = '280px';
+        modalEl.style.minWidth = 'unset';
+        contentEl.style.padding = '16px';
+
+        const input = contentEl.createEl('input', { type: 'text' });
+        input.value = this.currentValue;
+        input.style.width = '100%';
+        input.style.marginBottom = '12px';
+
+        const submit = () => { void this.onSubmit(input.value.trim()).then(() => this.close()); };
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); if (e.key === 'Escape') this.close(); });
+        contentEl.createEl('button', { text: 'Save' }).addEventListener('click', submit);
+        setTimeout(() => { input.focus(); input.select(); }, 50);
+    }
+
+    onClose() { this.contentEl.empty(); }
 }

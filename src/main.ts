@@ -53,6 +53,14 @@ export default class BoardViewPlugin extends Plugin {
 							description: 'Enter the property ID to display as card icon',
 						},
 						{
+							type: 'property',
+							displayName: 'ID Property',
+							key: BoardOptionKeys.ID_PROPERTY,
+							filter: (prop: string) => Services.plugin.isPropertyEligibleForGrouping(prop),
+							default: '',
+							description: 'Property shown as a muted ID above the card title. Click to copy, right-click to edit.',
+						},
+						{
 							type: 'toggle',
 							displayName: 'Open in side view',
 							key: BoardOptionKeys.OPEN_IN_SIDE_VIEW,
