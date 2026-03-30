@@ -46,6 +46,8 @@ export interface BoardViewCallbacks {
     onMoveSubGroup: (subGroupValue: string, direction: 'up' | 'down') => void;
     onSetColumnColor: (groupValue: string, color: string, isSubGroup?: boolean) => void;
     onNewNoteClick: (groupValue: unknown, subGroupValue?: unknown) => void;
+    onRenameGroup: (groupValue: string, currentLabel: string) => void;
+    onRenameSubGroup: (subGroupValue: string, currentLabel: string) => void;
 }
 
 const COLUMN_COLORS = ColorManager.getColorNames().map(name =>
@@ -152,6 +154,13 @@ export class BoardView {
                         .setIcon('arrow-right')
                         .onClick(() => {
                             callbacks.onMoveGroup(column.id, 'right');
+                        });
+                });
+                menu.addItem((item) => {
+                    item.setTitle('Rename')
+                        .setIcon('pencil')
+                        .onClick(() => {
+                            callbacks.onRenameGroup(column.id, column.title);
                         });
                 });
                 menu.addItem((item) => {
@@ -266,6 +275,13 @@ export class BoardView {
                         .setIcon('arrow-down')
                         .onClick(() => {
                             callbacks.onMoveSubGroup(row.id, 'down');
+                        });
+                });
+                menu.addItem((item) => {
+                    item.setTitle('Rename')
+                        .setIcon('pencil')
+                        .onClick(() => {
+                            callbacks.onRenameSubGroup(row.id, row.title);
                         });
                 });
                 menu.addItem((item) => {

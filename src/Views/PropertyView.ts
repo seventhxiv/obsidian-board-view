@@ -4,6 +4,12 @@ import { BasesEntry, BasesPropertyId, RenderContext, setIcon } from 'obsidian';
 import Services from '../Base/Services';
 import { BoardOptions } from './OptionsExtractor';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getSl(): any {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (Services.app as any).plugins?.plugins?.['supercharged-links-obsidian'] ?? null;
+}
+
 export interface PropertyViewContext {
     options?: BoardOptions;
 }
@@ -96,8 +102,18 @@ export class PropertyView {
                 const widget = (Services.app as InternalApp).metadataTypeManager.registeredTypeWidgets[propertyNativeType];
                 (widget as { render: (el: HTMLElement, value: unknown, context: unknown) => void; }).render(child, propertyValue, context);
             }
+
+            // Let Supercharged Links process any link pills the widget rendered.
+            // Widget renders are async (rAF/timeout), so we give a short delay then
+            // call SL's own updateContainer() — it applies data-link-* attrs exactly
+            // as it would for any other Obsidian view.
+            const sl = getSl();
+            if (sl && typeof sl.updateContainer === 'function') {
+                setTimeout(() => sl.updateContainer(child, sl, '[data-href]'), 50);
+            }
         }
 
         return propEl;
     }
 }
+
